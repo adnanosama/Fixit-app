@@ -1,0 +1,5 @@
+- [x] Update side panel (drawer) background color in `home_page.dart`.
+- [x] Implement `CustomScrollView` and `SliverAppBar` in `home_page.dart`.
+- [x] Add smooth scrolling animation for the "FixIt" text transition.
+- [x] Style the scrollable services section to look like a sliding drawer.
+- [x] Verify all animations and UI changes.
