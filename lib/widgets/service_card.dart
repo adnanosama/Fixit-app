@@ -11,8 +11,8 @@ class ServiceCard extends StatelessWidget {
     final isDark = theme.brightness == Brightness.dark;
     
     // Neon effect colors
-    final borderColor = isDark ? service.color : service.color.withOpacity(0.5);
-    final glowColor = service.color.withOpacity(isDark ? 0.3 : 0.1);
+    final borderColor = isDark ? service.color : service.color.withValues(alpha: 0.5);
+    final glowColor = service.color.withValues(alpha: isDark ? 0.3 : 0.1);
 
     return GestureDetector(
       onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => BookingPage(service: service))),
@@ -23,7 +23,7 @@ class ServiceCard extends StatelessWidget {
           border: Border.all(color: borderColor, width: 1.5),
           boxShadow: [
             // Shadow for depth
-            BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 5)),
+            BoxShadow(color: Colors.black.withValues(alpha: 0.05), blurRadius: 10, offset: const Offset(0, 5)),
             // Neon Glow
             BoxShadow(color: glowColor, blurRadius: 12, spreadRadius: 1),
           ],
@@ -36,9 +36,9 @@ class ServiceCard extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(16), 
                 decoration: BoxDecoration(
-                  color: service.color.withOpacity(0.1), 
+                  color: service.color.withValues(alpha: 0.1), 
                   shape: BoxShape.circle,
-                  boxShadow: [BoxShadow(color: service.color.withOpacity(0.2), blurRadius: 8)]
+                  boxShadow: [BoxShadow(color: service.color.withValues(alpha: 0.2), blurRadius: 8)]
                 ), 
                 child: Icon(service.icon, size: 40, color: service.color)
               )

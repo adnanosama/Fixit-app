@@ -103,8 +103,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                       children: [
                         const Text("Dark Mode", style: TextStyle(fontWeight: FontWeight.w500)),
                         Switch(
-                          value: themeNotifier.value == ThemeMode.dark,
-                          onChanged: (val) => themeNotifier.value = val ? ThemeMode.dark : ThemeMode.light,
+                          value: ThemeController.isDarkMode,
+                          onChanged: (val) => ThemeController.setThemeMode(val ? ThemeMode.dark : ThemeMode.light),
                         ),
                       ],
                     ),
@@ -224,7 +224,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                     borderRadius: const BorderRadius.only(topLeft: Radius.circular(40), topRight: Radius.circular(40)),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(isDark ? 0.3 : 0.05),
+                        color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.05),
                         blurRadius: 15,
                         offset: const Offset(0, -5),
                       )

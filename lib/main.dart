@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'app_config/theme.dart';
+import 'theme/app_theme.dart';
 import 'screens/home_page.dart';
 
 void main() {
@@ -13,7 +13,7 @@ class RepairShopApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return ValueListenableBuilder<ThemeMode>(
       valueListenable: themeNotifier,
-      builder: (_, mode, __) {
+      builder: (_, mode, _) {
         return MaterialApp(
           title: 'FixIt Pro',
           debugShowCheckedModeBanner: false,

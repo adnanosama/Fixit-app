@@ -37,7 +37,7 @@ class _MyBookingsPageState extends State<MyBookingsPage> {
             child: Card(
               margin: const EdgeInsets.only(bottom: 16),
               child: ListTile(
-                leading: CircleAvatar(backgroundColor: booking.service.color.withOpacity(0.1), child: Icon(booking.service.icon, color: booking.service.color)),
+                leading: CircleAvatar(backgroundColor: booking.service.color.withValues(alpha: 0.1), child: Icon(booking.service.icon, color: booking.service.color)),
                 title: Text(booking.service.name),
                 subtitle: Text("${booking.deviceName} • ${booking.time.format(context)}"),
               ),
