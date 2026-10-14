@@ -44,9 +44,7 @@ class ServiceCard extends StatelessWidget {
               )
             ),
             const SizedBox(height: 15),
-            Text(service.name, style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black)),
-            const SizedBox(height: 5),
-            Text(service.price, style: TextStyle(color: isDark ? Colors.white70 : Colors.grey[600], fontWeight: FontWeight.w500)),
+            Text(service.name, textAlign: TextAlign.center, style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black)),
           ],
         ),
       ),

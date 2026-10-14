@@ -1,59 +1,72 @@
-# Implementation Plan - Separate Light Mode & Dark Mode into Modular Theme Directory
+# Implementation Plan - Custom Component Search, Retailer Network & Firebase Auth
 
-Organize the theme functionality into a dedicated `lib/theme/` directory with separated modules for Light Mode configuration, Dark Mode configuration, and Theme State/Controller management. This provides clean separation of concerns and simplifies overall integration.
+Implement consumer custom component search with live web device data and images, retailer location/pricing network for Pakistan, Firebase Authentication, separate sidebar drawer widget, and Material 3 UI optimizations.
 
-## Proposed Architecture & Folder Structure
+## User Review Required
 
-```
-lib/
-└── theme/
-    ├── light_theme.dart      # Light Mode ThemeData configuration
-    ├── dark_theme.dart       # Dark Mode ThemeData configuration
-    ├── theme_controller.dart # ValueNotifier & Theme management helpers
-    └── app_theme.dart        # Main export file & unified AppTheme access
-```
+> [!IMPORTANT]
+> **Firebase Setup Note**: Firebase packages (`firebase_core`, `firebase_auth`) will be added to `pubspec.yaml`. A modular `AuthService` will handle Firebase Authentication with graceful fallback to local authentication if `google-services.json` has not yet been placed in `android/app/`.
+
+> [!NOTE]
+> **Web Data Source**: Device autocomplete and images will be fetched live via `DeviceApiService` using HTTP web endpoints and fallback device catalog API (including major brands like Samsung, Apple, Xiaomi, Vivo, Infinix, etc., popular in Pakistan).
 
 ---
 
 ## Proposed Changes
 
-### Theme Module Creation (`lib/theme/`)
+### Data Models & Web Services
 
-#### [NEW] [light_theme.dart](file:///C:/Users/adnan/AndroidStudioProjects/Fixit/lib/theme/light_theme.dart)
-- Define `lightThemeData` containing the light theme specifications (background `#A5B4CF`, white24 card color, light Material 3 styling, etc.).
+#### [NEW] [device_model.dart](file:///C:/Users/adnan/AndroidStudioProjects/Fixit/lib/data_models/device_model.dart)
+- `MobileDevice`: `id`, `brand`, `modelName`, `imageUrl`, `specs`.
+- `RepairPart`: `id`, `partName`, `category`, `icon`.
+- `RetailerListing`: `shopName`, `city`, `locationNotes`, `pricePkr`, `inStock`, `contactPhone`.
 
-#### [NEW] [dark_theme.dart](file:///C:/Users/adnan/AndroidStudioProjects/Fixit/lib/theme/dark_theme.dart)
-- Define `darkThemeData` containing the dark theme specifications (midnight background `#0A0A12`, slate card color `#161625`, neon cyan primary accent, dark Material 3 styling).
+#### [NEW] [device_api_service.dart](file:///C:/Users/adnan/AndroidStudioProjects/Fixit/lib/services/device_api_service.dart)
+- Live HTTP fetching for mobile phone models and high-quality device images.
+- Query mobile phone repair parts catalog and mock/live local retailer price listings with exact shop location notes.
 
-#### [NEW] [theme_controller.dart](file:///C:/Users/adnan/AndroidStudioProjects/Fixit/lib/theme/theme_controller.dart)
-- Expose `themeNotifier` (`ValueNotifier<ThemeMode>`).
-- Add clean helper functions like `toggleTheme()`, `setThemeMode()`, and `isDarkMode` getter for simplified usage across UI widgets.
-
-#### [NEW] [app_theme.dart](file:///C:/Users/adnan/AndroidStudioProjects/Fixit/lib/theme/app_theme.dart)
-- Central export file exporting `light_theme.dart`, `dark_theme.dart`, and `theme_controller.dart`.
-- Define `AppTheme` class exposing static getters `lightTheme` and `darkTheme` for clean backward compatibility.
+#### [NEW] [auth_service.dart](file:///C:/Users/adnan/AndroidStudioProjects/Fixit/lib/services/auth_service.dart)
+- Firebase Auth integration (`signInWithEmailAndPassword`, `createUserWithEmailAndPassword`, `signOut`, `currentUser`).
 
 ---
 
-### App Refactoring & Integration
+### UI Components & Widgets
 
-#### [MODIFY] [theme.dart](file:///C:/Users/adnan/AndroidStudioProjects/Fixit/lib/app_config/theme.dart)
-- Update `lib/app_config/theme.dart` to export `package:fixit/theme/app_theme.dart` to maintain full backward compatibility for any existing config references.
+#### [NEW] [app_drawer.dart](file:///C:/Users/adnan/AndroidStudioProjects/Fixit/lib/widgets/app_drawer.dart)
+- Extract sidebar navigation drawer into a standalone widget.
+- Include user profile header, Consumer/Retailer mode indicator, Navigation links (Custom Search, My Bookings, Create Account / Login, Settings), and Dark Mode switch.
 
-#### [MODIFY] [main.dart](file:///C:/Users/adnan/AndroidStudioProjects/Fixit/lib/main.dart)
-- Update import path to `package:fixit/theme/app_theme.dart`.
+#### [MODIFY] [service_card.dart](file:///C:/Users/adnan/AndroidStudioProjects/Fixit/lib/widgets/service_card.dart)
+- Remove price tags from home screen service cards as requested.
+
+---
+
+### Screens
 
 #### [MODIFY] [home_page.dart](file:///C:/Users/adnan/AndroidStudioProjects/Fixit/lib/screens/home_page.dart)
-- Update theme import to `package:fixit/theme/app_theme.dart` and switch theme toggle call to use the clean `themeNotifier` / `toggleTheme()` methods.
+- Replace inline drawer with `AppDrawer`.
+- Remove price display from service grid.
+- Add custom `+` floating action button (FAB) / top bar action to trigger the Custom Component Search.
+
+#### [NEW] [custom_component_search_page.dart](file:///C:/Users/adnan/AndroidStudioProjects/Fixit/lib/screens/custom_component_search_page.dart)
+- **Device Autocomplete Field**: Live typing search for real mobile devices.
+- **Device Header Card**: Displays selected device image and title prominently.
+- **Part Selector**: Live filtering for repair parts (OLED Screen, Battery, Camera, Charging Port, etc.).
+- **Retailer Price & Location Cards**: Displays available prices in PKR and shop location details/notes added by registered local retailers.
+
+#### [NEW] [login_page.dart](file:///C:/Users/adnan/AndroidStudioProjects/Fixit/lib/screens/login_page.dart)
+- Material 3 Login & Sign-up screen integrated with `AuthService` (Firebase Auth).
 
 ---
 
 ## Verification Plan
 
-### Automated Verification
-- Run `flutter analyze` to ensure zero static analysis warnings or errors.
-- Run `flutter test` to ensure all widget tests continue to pass seamlessly.
+### Automated Tests
+- Run `flutter analyze` to ensure zero static analysis errors/warnings.
+- Run `flutter test` to verify all widget tests pass.
 
 ### Manual Verification
-- Verify Light Mode and Dark Mode rendering.
-- Test the Dark Mode toggle in the navigation drawer to confirm state updates work cleanly.
+- Test `+` Custom Search FAB: Type phone model (e.g. "Samsung S23", "iPhone 15"), view live suggestion list and device header image.
+- Select phone part and view retailer list with PKR pricing and shop location notes.
+- Open Navigation Drawer from the 3 horizontal lines and verify dark mode toggle and navigation links work seamlessly.
+- Test Login screen and authentication flow.

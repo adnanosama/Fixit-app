@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'services/auth_service.dart';
 import 'theme/app_theme.dart';
 import 'screens/home_page.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await AuthService.initializeFirebase();
   runApp(const RepairShopApp());
 }
 

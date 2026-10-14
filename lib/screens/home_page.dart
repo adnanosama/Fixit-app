@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import '../app_config/theme.dart';
 import '../data_models/service.dart';
-import '../widgets/service_card.dart';
+import '../widgets/app_drawer.dart';
 import '../widgets/chat_support_sheet.dart';
-import 'create_account_page.dart';
+import '../widgets/service_card.dart';
+import 'custom_component_search_page.dart';
 import 'my_bookings_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -17,12 +18,12 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   late AnimationController _animController;
 
   final List<Service> services = [
-    Service("Screen Replace", Icons.phone_iphone, "\$80", Colors.blue),
-    Service("Battery Fix", Icons.battery_charging_full, "\$45", Colors.green),
-    Service("Water Damage", Icons.water_drop, "\$100", Colors.cyan),
-    Service("Camera Repair", Icons.camera_alt, "\$60", Colors.purple),
-    Service("Speaker Fix", Icons.speaker, "\$35", Colors.orange),
-    Service("Software Update", Icons.system_update, "\$25", Colors.teal),
+    Service("Screen Replace", Icons.phone_iphone, "", Colors.blue),
+    Service("Battery Fix", Icons.battery_charging_full, "", Colors.green),
+    Service("Water Damage", Icons.water_drop, "", Colors.cyan),
+    Service("Camera Repair", Icons.camera_alt, "", Colors.purple),
+    Service("Speaker Fix", Icons.speaker, "", Colors.orange),
+    Service("Software Update", Icons.system_update, "", Colors.teal),
   ];
 
   @override
@@ -47,72 +48,9 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
     return Scaffold(
       key: _scaffoldKey,
-      drawer: Builder(
-          builder: (context) {
-            return Container(
-              width: MediaQuery.of(context).size.width * 0.75,
-              margin: const EdgeInsets.fromLTRB(10, 10, 0, 10),
-              decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF2D2D44) : const Color(0xFFF1F4F9),
-                borderRadius: BorderRadius.circular(30),
-                boxShadow: [const BoxShadow(color: Colors.black26, blurRadius: 20)],
-              ),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pop(context);
-                            _animController.reverse();
-                          },
-                          child: RotationTransition(
-                            turns: Tween(begin: 0.0, end: 0.25).animate(_animController),
-                            child: Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: isDark ? Colors.black26 : Colors.grey[100],
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: const Icon(Icons.menu),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 15),
-                        const Text("Menu", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                      ],
-                    ),
-                  ),
-                  const CircleAvatar(radius: 40, backgroundColor: Colors.indigo, child: Text("A", style: TextStyle(fontSize: 30, color: Colors.white))),
-                  const SizedBox(height: 10),
-                  const Text("Adnan Developer", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  const Text("adnan@fixitpro.com", style: TextStyle(color: Colors.grey)),
-                  const SizedBox(height: 30),
-                  _buildDrawerItem(Icons.person, "My Account", () {}),
-                  _buildDrawerItem(Icons.person_add, "Create Account", () {
-                    Navigator.pop(context);
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const CreateAccountPage()));
-                  }),
-                  _buildDrawerItem(Icons.settings, "Settings", () {}),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text("Dark Mode", style: TextStyle(fontWeight: FontWeight.w500)),
-                        Switch(
-                          value: ThemeController.isDarkMode,
-                          onChanged: (val) => ThemeController.setThemeMode(val ? ThemeMode.dark : ThemeMode.light),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            );
-          }
+      drawer: AppDrawer(
+        animController: _animController,
+        onClose: () => _animController.reverse(),
       ),
       onDrawerChanged: (isOpen) {
         if (isOpen) {
@@ -142,7 +80,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                       return Opacity(
                         opacity: (1 - opacity).clamp(0.0, 1.0),
                         child: Text(
-                          "FixIt",
+                          "FixIt Consumer",
                           style: TextStyle(
                             color: isDark ? Colors.white : Colors.indigo,
                             fontWeight: FontWeight.bold,
@@ -164,8 +102,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const SizedBox(height: 60),
-                                const Text("Welcome Back,", style: TextStyle(fontSize: 16, color: Colors.grey)),
+                                const SizedBox(height: 55),
+                                const Text("Pakistan Retailer Network,", style: TextStyle(fontSize: 14, color: Colors.grey)),
                                 Text(
                                   "FixIt Support",
                                   style: TextStyle(
@@ -195,7 +133,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                           decoration: BoxDecoration(
                             color: Theme.of(context).cardColor,
                             borderRadius: BorderRadius.circular(8),
-                            boxShadow: [const BoxShadow(color: Colors.black12, blurRadius: 4)],
+                            boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
                           ),
                           child: const Icon(Icons.menu),
                         ),
@@ -204,13 +142,44 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                   ),
                 ),
                 actions: [
+                  // Custom Component Search Top Action Icon
+                  Padding(
+                    padding: const EdgeInsets.only(right: 10.0),
+                    child: GestureDetector(
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const CustomComponentSearchPage()),
+                      ),
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.indigo,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.indigo.withValues(alpha: 0.3),
+                              blurRadius: 6,
+                            )
+                          ],
+                        ),
+                        child: const Icon(Icons.add, color: Colors.white),
+                      ),
+                    ),
+                  ),
                   Padding(
                     padding: const EdgeInsets.only(right: 16.0),
                     child: GestureDetector(
-                      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const MyBookingsPage())),
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const MyBookingsPage()),
+                      ),
                       child: Container(
                         padding: const EdgeInsets.all(8),
-                        decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle, boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)]),
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)],
+                        ),
                         child: const Icon(Icons.calendar_month, color: Colors.indigo),
                       ),
                     ),
@@ -231,45 +200,119 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                     ],
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 30, 20, 100),
-                    child: GridView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2, crossAxisSpacing: 15, mainAxisSpacing: 15, childAspectRatio: 0.85),
-                      itemCount: services.length,
-                      itemBuilder: (context, index) => ServiceCard(service: services[index]),
+                    padding: const EdgeInsets.fromLTRB(20, 24, 20, 100),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Custom Search Banner Prompt
+                        InkWell(
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const CustomComponentSearchPage()),
+                          ),
+                          borderRadius: BorderRadius.circular(16),
+                          child: Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [Colors.indigo, Color(0xFF3F51B5)],
+                              ),
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 8)],
+                            ),
+                            child: const Row(
+                              children: [
+                                CircleAvatar(
+                                  backgroundColor: Colors.white24,
+                                  child: Icon(Icons.add, color: Colors.white),
+                                ),
+                                SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Search Custom Device Parts",
+                                        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15),
+                                      ),
+                                      Text(
+                                        "Type model name to compare local shop prices",
+                                        style: TextStyle(color: Colors.white70, fontSize: 12),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Icon(Icons.arrow_forward_ios, color: Colors.white70, size: 16),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+
+                        Text(
+                          "General Repair Services",
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: isDark ? Colors.white : Colors.indigo,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
+                        GridView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 15,
+                            mainAxisSpacing: 15,
+                            childAspectRatio: 1.0,
+                          ),
+                          itemCount: services.length,
+                          itemBuilder: (context, index) => ServiceCard(service: services[index]),
+                        ),
+                      ],
                     ),
                   ),
                 ),
               ),
             ],
           ),
+
+          // Floating Action Buttons (Custom Device Search + Support Chat)
           Positioned(
             bottom: 20,
             right: 20,
-            child: FloatingActionButton(
-              backgroundColor: Colors.green,
-              heroTag: 'chatBtn',
-              child: const Icon(Icons.chat_bubble, color: Colors.white),
-              onPressed: () => showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                backgroundColor: Colors.transparent,
-                builder: (c) => const ChatSupportSheet(),
-              ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                FloatingActionButton.extended(
+                  backgroundColor: Colors.indigo,
+                  heroTag: 'searchBtn',
+                  icon: const Icon(Icons.add, color: Colors.white),
+                  label: const Text("Custom Part", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  onPressed: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const CustomComponentSearchPage()),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                FloatingActionButton(
+                  backgroundColor: Colors.green,
+                  heroTag: 'chatBtn',
+                  child: const Icon(Icons.chat_bubble, color: Colors.white),
+                  onPressed: () => showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (c) => const ChatSupportSheet(),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildDrawerItem(IconData icon, String title, VoidCallback onTap) {
-    return ListTile(
-      leading: Icon(icon, color: Colors.indigo),
-      title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-      onTap: onTap,
     );
   }
 }

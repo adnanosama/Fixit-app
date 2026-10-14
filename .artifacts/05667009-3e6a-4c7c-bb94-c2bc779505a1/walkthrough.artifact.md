@@ -1,30 +1,16 @@
-# Walkthrough - Modular Theme Architecture
+# Walkthrough - Typing Search for Device Components
 
-The theme management, light theme configuration, and dark theme configuration have been extracted into a dedicated `lib/theme/` directory for cleaner modularity and easier integration across the app.
+Updated the **Custom Component Search** page so that mobile phone parts are searched using an interactive typing/autocomplete search field, matching the mobile phone model search functionality.
 
 ## Changes Made
 
-### New Theme Directory Structure (`lib/theme/`)
-
-```
-lib/
-└── theme/
-    ├── light_theme.dart      # Light Mode ThemeData definition
-    ├── dark_theme.dart       # Dark Mode ThemeData definition
-    ├── theme_controller.dart # ThemeNotifier & ThemeController state helpers
-    └── app_theme.dart        # Central export & unified AppTheme access class
-```
-
-- **[NEW] [light_theme.dart](file:///C:/Users/adnan/AndroidStudioProjects/Fixit/lib/theme/light_theme.dart)**: Houses `lightThemeData` containing light mode styling (shaded blue-grey background, light app bar, indigo primary).
-- **[NEW] [dark_theme.dart](file:///C:/Users/adnan/AndroidStudioProjects/Fixit/lib/theme/dark_theme.dart)**: Houses `darkThemeData` containing dark mode styling (deep midnight `#0A0A12`, slate card `#161625`, cyan accent `#00F2FF`).
-- **[NEW] [theme_controller.dart](file:///C:/Users/adnan/AndroidStudioProjects/Fixit/lib/theme/theme_controller.dart)**: Defines `themeNotifier` and `ThemeController` providing `isDarkMode`, `toggleTheme()`, and `setThemeMode()`.
-- **[NEW] [app_theme.dart](file:///C:/Users/adnan/AndroidStudioProjects/Fixit/lib/theme/app_theme.dart)**: Central export file for clean single-import usage (`AppTheme.lightTheme` and `AppTheme.darkTheme`).
-
-### Refactored App Integration
-
-- **[theme.dart](file:///C:/Users/adnan/AndroidStudioProjects/Fixit/lib/app_config/theme.dart)**: Updated to re-export `package:fixit/theme/app_theme.dart` for 100% backward compatibility.
-- **[main.dart](file:///C:/Users/adnan/AndroidStudioProjects/Fixit/lib/main.dart)**: Updated import to `theme/app_theme.dart`.
-- **[home_page.dart](file:///C:/Users/adnan/AndroidStudioProjects/Fixit/lib/screens/home_page.dart)**: Updated import to `theme/app_theme.dart` and refactored theme toggle logic to use `ThemeController.isDarkMode` and `ThemeController.setThemeMode()`.
+### Autocomplete Component Search
+- **[custom_component_search_page.dart](file:///C:/Users/adnan/AndroidStudioProjects/Fixit/lib/screens/custom_component_search_page.dart)**:
+  - Removed static chip selections for parts.
+  - Replaced part selection with a real-time **typing & autocomplete search field** (`_partQueryController`).
+  - As users type (e.g., *"OLED"*, *"Battery"*, *"Camera"*, *"Port"*, *"Glass"*, *"IC"*), dynamic part suggestions appear.
+  - Supports selecting from filtered suggestions or clearing/re-typing part names.
+  - Once both phone model and part are selected, local shop listings with PKR pricing and exact shop location notes are displayed instantly.
 
 ---
 
@@ -32,7 +18,7 @@ lib/
 
 ### Static Analysis (`flutter analyze`)
 > [!NOTE]
-> `flutter analyze` passed with **0 issues**.
+> `flutter analyze` passed with **0 issues found**.
 
 ```
 Analyzing Fixit...
@@ -44,5 +30,5 @@ No issues found!
 > `flutter test` passed with **100% test pass rate**.
 
 ```
-00:23 +1: All tests passed!
+00:07 +1: All tests passed!
 ```
